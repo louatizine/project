@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gestionConge/src/features/authentification/screens/signup/widgets/signup_footer_widget.dart';
 import 'package:gestionConge/src/features/authentification/screens/signup/widgets/signup_form_widget.dart';
 
 
@@ -23,12 +21,12 @@ class SignUpScreen extends StatelessWidget {
               children: const [
                 FormHeaderWidget(
                   image: tWelcomeScreenImage,
-                  title: tSignUpTitle,
-                  subTitle: tSignUpSubTitle,
+                 // title: tSignUpTitle,
+                  //subTitle: tSignUpSubTitle,
                   imageHeight: 0.50,
                 ),
                 SignUpFormWidget(),
-                SignUpFooterWidget(),
+               //SignUpFooterWidget(),
               ],
             ),
           ),

@@ -8,18 +8,17 @@ class TAppTheme {
 
 
   static ThemeData lightTheme = ThemeData(
-    primarySwatch: Colors.deepOrange,
+    primaryColor: Colors.white,
     brightness: Brightness.light,
     textTheme: TTextTheme.lightTextTheme,
     appBarTheme: const AppBarTheme(),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(),
-    elevatedButtonTheme:
-    ElevatedButtonThemeData(style: ElevatedButton.styleFrom()),
+    elevatedButtonTheme: ElevatedButtonThemeData(style: ElevatedButton.styleFrom()),
   );
 
 
   static ThemeData darkTheme = ThemeData(
-    primarySwatch: Colors.deepOrange,
+    primaryColor: Colors.white,
     brightness: Brightness.dark,
     textTheme: TTextTheme.darkTextTheme,
     appBarTheme: const AppBarTheme(),

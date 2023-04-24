@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../constantes/sizes.dart';
 import '../../../../../constantes/text_string.dart';
-import '../../../../core/controllers/logincontroller.dart';
+import '../../../../../../Service/logincontroller.dart';
 import '../../../../core/controllers/registercontrollers.dart';
 
 class SignUpFormWidget extends StatelessWidget {
@@ -30,7 +30,7 @@ class SignUpFormWidget extends StatelessWidget {
                   prefixIcon: Icon(Icons.person_outline_rounded),
                   border: OutlineInputBorder(),
               ),
-              controller: registercontroller.nameController,
+              controller: registercontroller.UsernameController,
             ),
             const SizedBox(height: tFormHeight - 20),
             TextFormField(
@@ -43,7 +43,11 @@ class SignUpFormWidget extends StatelessWidget {
             const SizedBox(height: tFormHeight - 20),
             TextFormField(
               decoration: const InputDecoration(
-                  label: Text(tPhoneNo), prefixIcon: Icon(Icons.numbers), border: OutlineInputBorder(),),
+                  label: Text(tRole), prefixIcon: Icon(Icons.numbers),
+                border: OutlineInputBorder(),
+              ),
+              controller: registercontroller.roleController,
+
             ),
             const SizedBox(height: tFormHeight - 20),
             TextFormField(

@@ -3,9 +3,9 @@ import 'package:gestionConge/src/features/authentification/screens/splash_screen
 import 'package:gestionConge/src/utils/theme/theme.dart';
 import 'package:get/get.dart';
 
+
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(const App());
+  runApp(const App(),);
 }
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class App extends StatelessWidget {
       darkTheme: TAppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
       transitionDuration: const Duration(milliseconds: 500),
-      home:const Splash(),
+      home:  const Splash(),
     );
 
   }
