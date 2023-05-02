@@ -1,13 +1,13 @@
 class CongeRequest {
-  final int? id;
-  final DateTime? startDate;
-  final DateTime? endDate;
+   int? id;
+   DateTime? startDate;
+   DateTime? endDate;
   //final DateTime startTime;
   //final DateTime endTime;
-  final String? reason;
-  final int? employe_id;
-  final int? status_id;
-  final int? typeConge_id;
+   String? reason;
+   int? employe_id;
+   int? status_id;
+   int? typeConge_id;
 
   CongeRequest({
      this.id,

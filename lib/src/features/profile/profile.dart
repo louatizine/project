@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:gestionConge/Models/Conge.dart';
-import 'package:gestionConge/Models/EditRequest.dart';
+
 import 'package:gestionConge/Models/EmployeInformation.dart';
 import 'package:gestionConge/Service/employe_service.dart';
 import 'package:intl/intl.dart';
@@ -23,35 +22,38 @@ class _ProfileState extends State<Profile> {
   late Future<EmployeInformation> employe;
   final emailController = TextEditingController();
 
-  EditRequest FromEmployeToEmployeRequest(EmployeInformation employe) {
-    EditRequest editRequest = EditRequest(
-        firstName:  employe.firstName,
-        lastName: employe.lastName,
-        adress: employe.adress,
-        email: employe.email,
-        tel: employe.tel,
-        id: employe.id,
-        contactStart: employe.contactStart,
-        contactEnd: employe.contactEnd,
+  // EditRequest FromEmployeToEmployeRequest(EmployeInformation employe) {
+  //   EditRequest editRequest = EditRequest(
+  //       firstName:  employe.firstName,
+  //       lastName: employe.lastName,
+  //       adress: employe.adress,
+  //       email: employe.email,
+  //       tel: employe.tel,
+  //       id: employe.id,
+  //       contactStart: employe.contactStart,
+  //       contactEnd: employe.contactEnd,
+  //
+  //   );
+  //   return editRequest;
+  // }
 
-    );
-    return editRequest;
-  }
-
-  Future<EmployeInformation> updateUser(EmployeInformation employe) async {
+  Future<void> updateUser(String firstName) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString('accessToken');
-    EditRequest employesEdit = FromEmployeToEmployeRequest(employe);
+    final Map<String, dynamic> requestBody = {
+      'firstName': firstName,
+    };
     final response = await http.post(
       Uri.parse('http://localhost:8090/api/employe/edit'),
+
       headers: {
         HttpHeaders.authorizationHeader: 'Bearer $accessToken',
       },
-        body: json.encode(employesEdit.toJson())
+        body: json.encode(requestBody)
     );
 
     if (response.statusCode == 200) {
-      return EmployeInformation.fromJson(jsonDecode(response.body));
+      print('User information updated successfully');
     } else {
       throw Exception("error ");
     }
@@ -198,7 +200,7 @@ class _ProfileState extends State<Profile> {
                                     ElevatedButton(
                                       onPressed: () {
                                         setState(()  {
-                                              employe = updateUser(employe) as EmployeInformation;
+                                          updateUser(emailController.text);
                                         });
                                       },
                                       child: const Text('Submit'),

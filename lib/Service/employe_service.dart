@@ -39,7 +39,6 @@ class EmployeService {
     List<Employe> employeesList = [];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString('accessToken');
-    String userId = prefs.getString('id') ?? '';
 
     final response = await http.get(
       Uri.parse('http://localhost:8090/api/employe/getAllEmploye'),

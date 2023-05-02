@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gestionConge/Service/logincontroller.dart';
-import 'package:gestionConge/src/features/conge/conge_historique.dart';
+import 'package:gestionConge/src/features/EmployeDashboard/employeDashboard.dart';
+import 'package:gestionConge/src/features/conge/employeeCongeList.dart';
 import 'package:get/get.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,26 +12,12 @@ import 'dashboard.dart';
 import 'my_drawer_header.dart';
 import '../conge/conge_demande_page.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
+class HomeEmployeePage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePage(),
-    );
-  }
+  _HomeEmployeePageState createState() => _HomeEmployeePageState();
 }
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class _HomeEmployeePageState extends State<HomeEmployeePage> {
   String _userName = '';
   var currentPage = DrawerSections.dashboard;
   LoginController loginController = Get.put(LoginController());
@@ -47,13 +34,13 @@ class _HomePageState extends State<HomePage> {
     var container;
     _loadUserName();
     if (currentPage == DrawerSections.dashboard) {
-      container = const Display();
-    } else if (currentPage == DrawerSections.demandeConge) {
+      container = const employeDashboardPage();
+    }  else if (currentPage == DrawerSections.collaboratorsList) {
+      container = Display();
+    }else if (currentPage == DrawerSections.demandeConge) {
       container = addCongePage();
-    } else if (currentPage == DrawerSections.congeDemandePage) {
-      container = CongeDemandePage();
-    } else if (currentPage == DrawerSections.congeHistorique) {
-      container = CongeHistoriquePage();
+    } else if (currentPage == DrawerSections.mesDemandes) {
+      container = EmployeeCongeListPage();
     } else if (currentPage == DrawerSections.profile) {
       container = const Profile();
     } else if (currentPage == DrawerSections.logout) {
@@ -109,16 +96,16 @@ class _HomePageState extends State<HomePage> {
         children: [
           menuItem(1, "Dashboard", Icons.dashboard_outlined,
               currentPage == DrawerSections.dashboard ? true : false),
-          menuItem(2, "Demande congé", Icons.event,
+          menuItem(2, "Collaborateurs ", Icons.supervised_user_circle,
+              currentPage == DrawerSections.collaboratorsList ? true : false),
+          menuItem(3, "Demande congé", Icons.event,
               currentPage == DrawerSections.demandeConge ? true : false),
-          menuItem(3, "Demandes en cours", Icons.notifications_outlined,
-              currentPage == DrawerSections.congeDemandePage ? true : false),
-          menuItem(4, "Historique Congé", Icons.notifications_outlined,
-              currentPage == DrawerSections.congeHistorique ? true : false),
+          menuItem(4, "Mes Demandes", Icons.notifications_outlined,
+              currentPage == DrawerSections.mesDemandes ? true : false),
           menuItem(5, "Profile", Icons.person,
               currentPage == DrawerSections.profile ? true : false),
           menuItem(6, "Déconnexion", Icons.logout,
-              currentPage == DrawerSections.congeDemandePage ? true : false),
+              currentPage == DrawerSections.logout ? true : false),
           const Divider(),
         ],
       ),
@@ -135,12 +122,12 @@ class _HomePageState extends State<HomePage> {
             if (id == 1) {
               currentPage = DrawerSections.dashboard;
             } else if (id == 2) {
+              currentPage = DrawerSections.collaboratorsList;
+            }else if (id == 3) {
               currentPage = DrawerSections.demandeConge;
-            } else if (id == 3) {
-              currentPage = DrawerSections.congeDemandePage;
             } else if (id == 4) {
-              currentPage = DrawerSections.congeHistorique;
-            } else if (id == 5) {
+              currentPage = DrawerSections.mesDemandes;
+            }  else if (id == 5) {
               currentPage = DrawerSections.profile;
             } else if (id == 6) {
               currentPage = DrawerSections.logout;
@@ -177,10 +164,11 @@ class _HomePageState extends State<HomePage> {
 }
 
 enum DrawerSections {
+  collaboratorsList,
   dashboard,
   demandeConge,
   profile,
   logout,
-  congeDemandePage,
-  congeHistorique
+  mesDemandes,
+
 }

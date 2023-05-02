@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../common_widget/fade_in_animation/animation_design.dart';
 import '../../../../common_widget/fade_in_animation/fade_in_animation_controllers.dart';
 import '../../../../common_widget/fade_in_animation/fade_in_model_animation.dart';

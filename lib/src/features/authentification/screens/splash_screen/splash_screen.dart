@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:gestionConge/src/features/Dashboard/home.dart';
+import 'package:gestionConge/src/features/Dashboard/homeEmployee.dart';
 import 'package:gestionConge/src/features/authentification/screens/welcome/welcome_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
@@ -17,8 +18,14 @@ class _SplashState extends State<Splash> {
   redirection() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString('accessToken');
+    List<String>? roles = prefs.getStringList('user_roles');
+
     if (accessToken!=null) {
-      Get.to(() => HomePage());
+      if (roles!.contains("ROLE_ADMIN")) {
+        Get.to(() => HomePage());
+      } else {
+        Get.to(() => HomeEmployeePage());
+      }
     }
     else{
       Get.to(() =>WelcomeScreen() );

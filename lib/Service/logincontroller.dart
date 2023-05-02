@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:gestionConge/src/features/Dashboard/home.dart';
+import 'package:gestionConge/src/features/Dashboard/homeEmployee.dart';
 import 'package:gestionConge/src/features/authentification/screens/login/LOG1/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -36,10 +37,14 @@ class LoginController extends GetxController {
         roles = List<String>.from(json['roles']);
         prefs.setStringList('user_roles', roles);
 
+        if (roles.contains("ROLE_ADMIN")) {
+          Get.to(() => HomePage());
+        } else {
+          Get.to(() => HomeEmployeePage());
+        }
         emailController.clear();
         passwordController.clear();
         //Get.off( const LoginScreen());
-        Get.to(() => HomePage());
       } else {
         throw jsonDecode(response.body)["message"] ?? "Unknown Error Occured";
       }

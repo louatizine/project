@@ -1,5 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../Models/EmployeInformation.dart';
+import '../../../Service/employe_service.dart';
 import '../../common_widget/form/button.dart';
 
 
@@ -7,9 +13,63 @@ import '../../common_widget/form/button.dart';
 class EditProfilePage extends StatefulWidget {
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
+
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+
+  EmployeService employeService = EmployeService();
+  late Future<EmployeInformation> employe;
+  final emailController = TextEditingController();
+
+  // EditRequest FromEmployeToEmployeRequest(EmployeInformation employe) {
+  //   EditRequest editRequest = EditRequest(
+  //       firstName:  employe.firstName,
+  //       lastName: employe.lastName,
+  //       adress: employe.adress,
+  //       email: employe.email,
+  //       tel: employe.tel,
+  //       id: employe.id,
+  //       contactStart: employe.contactStart,
+  //       contactEnd: employe.contactEnd,
+  //
+  //   );
+  //   return editRequest;
+  // }
+
+  Future<EmployeInformation> updateUser(int userId, String firstName, String lastName, String address, String email, String tel) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+    final Map<String, dynamic> requestBody = {
+      'firstName': firstName,
+      'lastName': lastName,
+      'address': address,
+      'email': email,
+      'tel': tel,
+    };
+    final response = await http.post(
+        Uri.parse('http://localhost:8090/api/employe/edit'),
+
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+        },
+        body: json.encode(requestBody)
+    );
+
+    if (response.statusCode == 200) {
+      print('User information updated successfully');
+      return EmployeInformation.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception("error ");
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    employe = employeService.getEmploye();
+  }
   bool showPassword = false;
   @override
   Widget build(BuildContext context) {
@@ -23,19 +83,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             color: Colors.green,
           ),
           onPressed: () {},
-        ),
-        // actions: [
-        //   // IconButton(
-        //   //   icon: Icon(
-        //   //     Icons.settings,
-        //   //     color: Colors.green,
-        //   //   ),
-        //   //   // onPressed: () {
-        //   //   //   Navigator.of(context).push(MaterialPageRoute(
-        //   //   //       builder: (BuildContext context) => SettingsPage()));
-        //   //   // },
-        //   // ),
-        // ],
+        )
       ),
       body: Container(
         padding: const EdgeInsets.only(left: 16, top: 25, right: 16),

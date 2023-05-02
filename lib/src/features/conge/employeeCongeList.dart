@@ -2,36 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:gestionConge/Models/Conge.dart';
 import 'package:gestionConge/Service/conge_service.dart';
-import 'package:gestionConge/src/features/Dashboard/homeEmployee.dart';
 import 'package:intl/intl.dart';
-import 'package:get/get.dart';
 
-class CongeDemandePage extends StatefulWidget {
-  const CongeDemandePage({Key? key}) : super(key: key);
+class EmployeeCongeListPage extends StatefulWidget {
+  const EmployeeCongeListPage({Key? key}) : super(key: key);
 
   @override
-  _CongeDemandePageState createState() => _CongeDemandePageState();
+  _EmployeeCongeListPageState createState() => _EmployeeCongeListPageState();
 }
 
-class _CongeDemandePageState extends State<CongeDemandePage> {
+class _EmployeeCongeListPageState extends State<EmployeeCongeListPage> {
   CongeService congeService = CongeService();
   late Future<List<Conge>> congeList;
   int page = 1;
-
   @override
   void initState() {
+// TODO: implement initState
     super.initState();
-    congeList = congeService.getLeaveList(page, true);
+//  scrollController.addListener(_scrolleListener);
+    congeList = congeService.getCongeByEmployee();
   }
 
-  void editCongeStatuts(bool validate, Conge conge) {
-    if (validate) {
-      conge.status!.id = 3;
-    } else {
-      conge.status!.id = 2;
-    }
-    congeService.editConge(conge);
-    congeList = congeService.getLeaveList(page, true);
+  void deleteRequest(Conge conge) {
+     congeService.deleteConge(conge);
   }
 
   @override
@@ -42,30 +35,23 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
         future: congeList,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            if(snapshot.data!.length!=0) {
-              return ListView.separated(
-                padding: const EdgeInsets.only(top: 15.0),
-                itemCount: snapshot.data!.length,
-                separatorBuilder: (context, index) {
-                  return const Divider();
-                },
-                itemBuilder: (context, index) {
-                  return buildCard(snapshot.data![index]);
-                },
-              );
-            }
-            else{
-              return const Center(
-                child: Text('Aucune Demande en cours ...'),
-              );
-            }
+            return ListView.separated(
+              padding: const EdgeInsets.only(top: 15.0),
+              itemCount: snapshot.data!.length,
+              separatorBuilder: (context, index) {
+                return const Divider();
+              },
+              itemBuilder: (context, index) {
+                return buildCard(snapshot.data![index]);
+              },
+            );
           } else if (snapshot.hasError) {
             return const Center(
               child: Text('Oops'),
             );
           } else {
             return const Center(
-              child: Text('Oops'),
+              child: Text('No request'),
             );          }
         },
       ),
@@ -89,67 +75,35 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
                 children: [
                   TextButton(
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Confirmation"),
-                            content:
-                                const Text("Êtes-vous sûre de vouloir accepter?"),
-                            actions: [
-                              TextButton(
-                                child: const Text("Non"),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
-                              TextButton(
-                                child: const Text("Oui"),
-                                onPressed: () {
-                                  editCongeStatuts(true, conge);
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
+                      if(conge.status!.label=="En cours")
+                        {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("Confirmation"),
+                                content: const Text("Voulez-vous vraiment supprimer?"),
+                                actions: [
+                                  TextButton(
+                                    child: const Text("Non"),
+                                    onPressed: () => Navigator.of(context).pop(),
+                                  ),
+                                  TextButton(
+                                    child: const Text("Oui"),
+                                    onPressed: () {
+                                      deleteRequest(conge);
+                                      congeList = congeService.getCongeByEmployee();
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
                           );
-                        },
-                      );
-                    },
-                    child: Container(
-                      height: 50,
-                      width: 300,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text('Valider',
-                          style: TextStyle(color: Colors.white)),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Confirmation"),
-                            content: const Text("Voulez-vous vraiment supprimer?"),
-                            actions: [
-                              TextButton(
-                                child: const Text("Non"),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
-                              TextButton(
-                                child: const Text("Oui"),
-                                onPressed: () {
-                                  editCongeStatuts(false, conge);
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                        }
+
                     },
                     child: Container(
                       height: 50,
@@ -159,7 +113,7 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       alignment: Alignment.center,
-                      child: const Text('Refuser',
+                      child: const Text('Supprimer',
                           style: TextStyle(color: Colors.white)),
                     ),
                   ),
@@ -191,11 +145,11 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
         margin: const EdgeInsets.only(left: 16, right: 16),
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          bottomRight: Radius.circular(40),
-        )),
+              topLeft: Radius.circular(20),
+              bottomRight: Radius.circular(40),
+            )),
         child: Container(
-          height: 150,
+          height: 200,
           padding: const EdgeInsets.all(8),
           alignment: Alignment.center,
           child: Column(
@@ -240,7 +194,7 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
                                     size: 16), // Add icon here
                                 const SizedBox(
                                     width:
-                                        3), // Add some spacing between icon and text
+                                    3), // Add some spacing between icon and text
                                 Text(
                                     "Start at : $startDate"), // Use string interpolation to add variable to text
                               ],
@@ -258,7 +212,7 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
                                     size: 16), // Add icon here
                                 const SizedBox(
                                     width:
-                                        3), // Add some spacing between icon and text
+                                    3), // Add some spacing between icon and text
                                 Text(
                                     "End at : $endDate"), // Use string interpolation to add variable to text
                               ],
@@ -287,29 +241,26 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
                       TableRow(children: [
                         TableCell(
                           child: Container(
-                            padding: const EdgeInsets.all(2.0),
+                            padding: const EdgeInsets.all(8.0),
                             child: Container(
                               decoration: BoxDecoration(
-                                color: Colors.green, // Set the background color
-                                borderRadius: BorderRadius.circular(
-                                    10.0), // Set the border radius
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: _getBackgroundColor(conge.status!.label),// Set the border radius
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(3.0),
-                                child: Text(
-                                  conge.status!.label,
+                              child:  Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: (Text(conge.status!    .label,
                                   style: const TextStyle(
                                     color: Colors.white, // Set the text color
-                                    fontSize: 13.0,
+                                    fontSize: 10.0,
                                   ),
-                                  textAlign: TextAlign
-                                      .center, // Center the text horizontally),
+                                  textAlign: TextAlign.center, // Center the text horizontally),
+                                )
+
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                      ]),
+                          ),)                      ]),
                     ],
                   ),
                 ),
@@ -319,5 +270,18 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
         ),
       ),
     );
+  }
+
+  Color _getBackgroundColor(String status) {
+    switch (status) {
+      case 'Valider':
+        return Colors.green;
+      case 'Refuser':
+        return Colors.red;
+      case 'En cours':
+      default:
+        return Colors.orange;
+    }
+
   }
 }

@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:gestionConge/Models/Conge.dart';
 import 'package:gestionConge/Models/CongeRequest.dart';
+import 'package:gestionConge/src/features/conge/conge_demande_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -46,12 +48,12 @@ class CongeService {
     CongeRequest congeRequest = FromCongeToCongeRequest(conge);
     print(congeRequest.toJson());
     final response =
-        await http.post(Uri.parse('http://localhost:8090/api/conge/edit'),
-            headers: {
-              HttpHeaders.authorizationHeader: 'Bearer $accessToken',
-              'Content-Type': 'application/json',
-            },
-            body: json.encode(congeRequest.toJson()));
+    await http.post(Uri.parse('http://localhost:8090/api/conge/edit'),
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(congeRequest.toJson()));
   }
 
   CongeRequest FromCongeToCongeRequest(Conge conge) {
@@ -66,43 +68,94 @@ class CongeService {
     return congeRequest;
   }
 
-
-
-
-  Future<Conge> addConge(Conge conge) async {
+  addConge(CongeRequest conge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString('accessToken');
-    CongeRequest congeRequest = FromCongeToCongeRequest(conge);
-    final response = await http.post(
-      Uri.parse('http://localhost:8090/api/conge/add'),
-      headers: {
-        HttpHeaders.authorizationHeader: 'Bearer $accessToken',
-        'Content-Type': 'application/json',
-      },
-        body: json.encode(congeRequest.toJson())
-    );
+    String? employe_id = prefs.getString('employe_id');
+    conge.employe_id = int.parse(employe_id!);
+
+    final response =
+    await http.post(Uri.parse('http://localhost:8090/api/conge/add'),
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(conge.toJson()));
 
     if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      Conge co = Conge.fromJson(data);
-      return co;
+      Get.to(() => CongeDemandePage());
     } else {
       throw Exception('Failed to add event');
     }
   }
-  // void  deleteConge(Conge conge) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? accessToken = prefs.getString('accessToken');
-  //   final response = await http.get(
-  //       Uri.parse('http://localhost:8090/api/conge/delete/{id}'),
-  //       headers: {
-  //         HttpHeaders.authorizationHeader: 'Bearer $accessToken',
-  //         'Content-Type': 'application/json',
-  //       },
-  //
-  //   );
-  //   // return json.decode(response.body);
-  // }
+
+  Future<List<Conge>> getCongeByEmployee() async {
+    List<Conge> LeaveList = [];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+    String? employeeId = prefs.getString('employe_id');
+
+    final response = await http.get(
+      Uri.parse('http://localhost:8090/api/conge/getByEmployeId/${employeeId}'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+      },
+    );
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      for (Map<String, dynamic> leave in data) {
+        Conge lea = Conge.fromJson(leave);
+        LeaveList.add(lea);
+      }
+      return LeaveList;
+    } else {
+      throw Exception("error ");
+    }
+  }
+
+  void deleteConge(Conge conge) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+    final response = await http.get(
+      Uri.parse('http://localhost:8090/api/conge/delete/${conge.id}'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+      },
+    );
+  }
+
+  Future<int> congeNumberByEmploye() async {
+    return await getCongeByEmployee().then((value) {
+      return value.length;
+    });
+  }
+
+  Future<List<Conge>> getCongeEnCours() async {
+    List<Conge> LeaveList = [];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+    String? employeeId = prefs.getString('employe_id');
+
+    final response = await http.get(
+      Uri.parse('http://localhost:8090/api/conge/getByEmployeId/${employeeId}'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+      },
+    );
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      for (Map<String, dynamic> leave in data) {
+        Conge lea = Conge.fromJson(leave);
+        LeaveList.add(lea);
+      }
+      LeaveList = LeaveList.where((leave) => leave.status!.label == "En cours").toList();
+      print(LeaveList);
+      return LeaveList;
+    } else {
+      throw Exception("error ");
+    }
+  }
 
 
 }

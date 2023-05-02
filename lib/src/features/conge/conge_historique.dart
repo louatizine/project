@@ -107,7 +107,7 @@ class _CongeHistoriquePageState extends State<CongeHistoriquePage> {
                             ),
                             child:  Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: (Text(conge.status!.label,
+                              child: (Text(conge.status!    .label,
                                 style: const TextStyle(
                                   color: Colors.white, // Set the text color
                                   fontSize: 10.0,
@@ -121,6 +121,7 @@ class _CongeHistoriquePageState extends State<CongeHistoriquePage> {
                         ),)
                     ],
                   ),
+
                 ],
               )),
         ),
@@ -137,7 +138,9 @@ class _CongeHistoriquePageState extends State<CongeHistoriquePage> {
         return Colors.red;
       case 'En cours':
       default:
-        return Colors.grey;
+        return Colors.yellow.shade500;
     }
 
-}}
+}
+
+}
