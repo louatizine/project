@@ -1,5 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:gestionConge/src/constantes/image_strings.dart';
+import 'package:gestionConge/src/features/Dashboard/dashboard.dart';
+import 'package:gestionConge/src/features/Dashboard/home.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,20 +27,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late Future<EmployeInformation> employe;
   final emailController = TextEditingController();
 
-  // EditRequest FromEmployeToEmployeRequest(EmployeInformation employe) {
-  //   EditRequest editRequest = EditRequest(
-  //       firstName:  employe.firstName,
-  //       lastName: employe.lastName,
-  //       adress: employe.adress,
-  //       email: employe.email,
-  //       tel: employe.tel,
-  //       id: employe.id,
-  //       contactStart: employe.contactStart,
-  //       contactEnd: employe.contactEnd,
-  //
-  //   );
-  //   return editRequest;
-  // }
+
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    employe = employeService.getEmploye();
+  }
 
   Future<EmployeInformation> updateUser(int userId, String firstName, String lastName, String address, String email, String tel) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -64,12 +64,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    employe = employeService.getEmploye();
-  }
+
   bool showPassword = false;
   @override
   Widget build(BuildContext context) {
@@ -82,7 +77,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Icons.arrow_back,
             color: Colors.green,
           ),
-          onPressed: () {},
+          onPressed: () {
+            Get.to(() => MyApp());
+          },
         )
       ),
       body: Container(
@@ -94,7 +91,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: ListView(
               children: [
                 const Text(
-                  "Edit Profile",
+                  "Modifier Mot de Passe",
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(
@@ -121,41 +118,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             shape: BoxShape.circle,
                             image:  const DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(''))),
+                                image:AssetImage(lock),
+                            )
+                        ),
                       ),
-                      Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                width: 4,
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                              ),
-                              color: Colors.blue,
-                            ),
-                            child: const Icon(
-                              Icons.edit,
-                              color: Colors.white,
-                            ),
-                          )),
+
                     ],
                   ),
                 ),
                 const SizedBox(
                   height: 35,
                 ),
-                buildTextField("Full Name", "Louati Zine", false),
-                buildTextField("E-mail", "Zine@gmail.com", false),
-                buildTextField("Password", "********", true),
-                buildTextField("Location", "", false),
-                buildTextField("Location", "", false),
-                buildTextField("Location", "", false),
-                buildTextField("Location", "", false),
+
+                buildTextField("Email", "Email",false),
+                buildTextField("Mot de passe actuel", "********", true),
+                buildTextField("Nouvelle Mot de passe", "********", true),
                 const SizedBox(
                   height: 10,
                 ),
@@ -163,7 +140,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     MyButton(
-                      label: 'Cancel',
+                      label: 'Annuler',
                       ontap: () {},
                       style: const TextStyle(
                           fontSize: 14,
@@ -171,7 +148,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           color: Colors.white),
                     ),
                     MyButton(
-                      label: 'SAVE',
+                      label: 'Enregistrer',
                       ontap: () {},
                       style: const TextStyle(
                           fontSize: 14,

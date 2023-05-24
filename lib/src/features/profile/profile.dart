@@ -3,12 +3,16 @@ import 'dart:io';
 
 import 'package:gestionConge/Models/EmployeInformation.dart';
 import 'package:gestionConge/Service/employe_service.dart';
+import 'package:gestionConge/src/features/profile/edit_profile.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Models/function.dart';
 import '../../common_widget/form/input.dart';
+import '../Dashboard/home.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -22,42 +26,7 @@ class _ProfileState extends State<Profile> {
   late Future<EmployeInformation> employe;
   final emailController = TextEditingController();
 
-  // EditRequest FromEmployeToEmployeRequest(EmployeInformation employe) {
-  //   EditRequest editRequest = EditRequest(
-  //       firstName:  employe.firstName,
-  //       lastName: employe.lastName,
-  //       adress: employe.adress,
-  //       email: employe.email,
-  //       tel: employe.tel,
-  //       id: employe.id,
-  //       contactStart: employe.contactStart,
-  //       contactEnd: employe.contactEnd,
-  //
-  //   );
-  //   return editRequest;
-  // }
 
-  Future<void> updateUser(String firstName) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('accessToken');
-    final Map<String, dynamic> requestBody = {
-      'firstName': firstName,
-    };
-    final response = await http.post(
-      Uri.parse('http://localhost:8090/api/employe/edit'),
-
-      headers: {
-        HttpHeaders.authorizationHeader: 'Bearer $accessToken',
-      },
-        body: json.encode(requestBody)
-    );
-
-    if (response.statusCode == 200) {
-      print('User information updated successfully');
-    } else {
-      throw Exception("error ");
-    }
-  }
 
   @override
   void initState() {
@@ -130,6 +99,7 @@ class _ProfileState extends State<Profile> {
                                   employe.firstName + employe.lastName,
                                   style: Theme.of(context).textTheme.headline6,
                                 ),
+                                
                                 const ListTile(
                                   contentPadding: EdgeInsets.all(0),
                                   //You can add Subtitle here
@@ -176,8 +146,17 @@ class _ProfileState extends State<Profile> {
                   ),
                   child: Column(
                     children: <Widget>[
-                      const ListTile(
+                       ListTile(
                         title: Text("User Informations"),
+                        trailing: const Icon(
+                          Icons.key, // Replace with the desired key icon
+                          color: Colors.black,
+                          size: 20,
+                        ),
+                        onTap: () {
+                          Get.to(() => EditProfilePage());
+                          print("object");
+                        },
                       ),
                       const Divider(),
                       GestureDetector(
@@ -200,7 +179,6 @@ class _ProfileState extends State<Profile> {
                                     ElevatedButton(
                                       onPressed: () {
                                         setState(()  {
-                                          updateUser(emailController.text);
                                         });
                                       },
                                       child: const Text('Submit'),

@@ -8,3 +8,5 @@ const String tWelcomeScreenImage= "assets/images/logo.png";
 
 const String tGoogleLogoImage= "assets/images/google.png";
 const String tForgetPasswordImage = "assets/images/top_background.png";
+
+const String lock = "assets/images/lock.jpg";

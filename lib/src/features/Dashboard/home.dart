@@ -73,9 +73,18 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlue,
-        title: const Text("Gestion de conge"),
+
         actions: <Widget>[
           Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: GestureDetector(
+                onTap: () {},
+                child: const Icon(
+                  Icons.notifications,
+                  size: 26.0,
+                ),
+              )
+          ),  Padding(
               padding: const EdgeInsets.only(right: 10.0),
               child: GestureDetector(
                 onTap: () {},
@@ -83,7 +92,8 @@ class _HomePageState extends State<HomePage> {
                   Icons.person,
                   size: 26.0,
                 ),
-              )),
+              )
+          ),
           Padding(
               padding: const EdgeInsets.only(right: 20.0, top: 20, left: 3.0),
               child: GestureDetector(
