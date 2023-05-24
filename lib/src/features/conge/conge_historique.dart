@@ -30,29 +30,43 @@ class _CongeHistoriquePageState extends State<CongeHistoriquePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: FutureBuilder(
-          future: congeList,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView.separated(
-                itemCount: snapshot.data!.length,
-                separatorBuilder: (context, index) {
-                  return const Divider();
-                },
-                itemBuilder: (context, index) {
-                  return buildCard(snapshot.data![index]);
-                },
-              );
-            } else if (snapshot.hasError) {
-              return const Center(
-                child: Text('Oops'),
-              );
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
-        ));
+      body: FutureBuilder(
+        future: congeList,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            // Sort the list based on status
+            List<Conge> sortedConges = snapshot.data!;
+            sortedConges.sort((a, b) {
+              if (a.status!.label == 'Valider' && b.status!.label == 'Refuser') {
+                return -1; // a comes before b
+              } else if (a.status!.label == 'Refuser' && b.status!.label == 'Valider') {
+                return 1; // a comes after b
+              } else {
+                return 0; // no change in order
+              }
+            });
+
+            return ListView.separated(
+              itemCount: sortedConges.length,
+              separatorBuilder: (context, index) {
+                return const Divider();
+              },
+              itemBuilder: (context, index) {
+                return buildCard(sortedConges[index]);
+              },
+            );
+          } else if (snapshot.hasError) {
+            return const Center(
+              child: Text('Oops'),
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );
   }
+
 
   buildCard(Conge conge) {
     DateFormat formatter = DateFormat('yy-MM-dd');
@@ -107,7 +121,7 @@ class _CongeHistoriquePageState extends State<CongeHistoriquePage> {
                             ),
                             child:  Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: (Text(conge.status!    .label,
+                              child: (Text(conge.status!.label,
                                 style: const TextStyle(
                                   color: Colors.white, // Set the text color
                                   fontSize: 10.0,

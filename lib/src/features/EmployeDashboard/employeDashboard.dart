@@ -23,7 +23,7 @@ class _employeDashboardPageState extends State<employeDashboardPage> {
   SoldCongeService soldCongeService = SoldCongeService();
 
   List<Statistique> statistiques = [];
-  List<CongeService> encours = [];
+  late int encours;
 
   @override
   void initState() {
@@ -31,19 +31,20 @@ class _employeDashboardPageState extends State<employeDashboardPage> {
     super.initState();
     getToTale();
     getCurrentSold();
+    getEncour();
   }
 
-  // getCongeEncour() {
-  //   congeService.getCongeEnCours().then((value) {
-  //     setState(() {
-  //       var currentNumber = value;
-  //       CongeService service = CongeService('hello',currentNumber.toString());
-  //       encours.add(service);
-  //     });
-  //   });
-  // }
-
-
+  getEncour() {
+    congeService.getCongeByEmployee().then((conges) {
+      final congesEnCours =
+          conges.where((conge) => conge.status!.label == 'En cours').toList();
+      setState(() {
+        encours = congesEnCours.length;
+      });
+    }).catchError((error) {
+      print('Error occurred while fetching congé en cours: $error');
+    });
+  }
 
   getCurrentSold() {
     soldCongeService.getSoldByEmploye().then((value) {
@@ -88,11 +89,10 @@ class _employeDashboardPageState extends State<employeDashboardPage> {
       },
     ));
   }
-
   serviceContainer(String image, String name, int index) {
     return GestureDetector(
       child: Container(
-        margin: const EdgeInsets.only(right: 20),
+        margin: const EdgeInsets.only(left: 16, right: 16),
         padding: const EdgeInsets.all(10.0),
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
@@ -125,124 +125,118 @@ class _employeDashboardPageState extends State<employeDashboardPage> {
   buildProfil(EmployeInformation employe) {
     return SingleChildScrollView(
         child: Column(children: [
-      FadeAnimation(
-          1,
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0, top: 10.0, right: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  'Bienvenu',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ],
+         Padding(
+        padding: const EdgeInsets.only(left: 20.0, top: 10.0, right: 10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text(
+              'Bienvenu',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-          )),
-      FadeAnimation(
-          1.2,
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Container(
-              padding: const EdgeInsets.all(20.0),
-              height: 180,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.shade200,
-                    offset: const Offset(0, 4),
-                    blurRadius: 10.0,
-                  ),
-                ],
+          ],
+        ),
+      ),
+        Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Container(
+          padding: const EdgeInsets.all(20.0),
+          height: 180,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.shade200,
+                offset: const Offset(0, 4),
+                blurRadius: 10.0,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: Image.network(
+                        'https://images.pexels.com/photos/355164/pexels-photo-355164.jpeg?crop=faces&fit=crop&h=200&w=200&auto=compress&cs=tinysrgb',
+                        width: 70,
+                      )),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ClipRRect(
-                          borderRadius: BorderRadius.circular(15.0),
-                          child: Image.network(
-                            'https://images.pexels.com/photos/355164/pexels-photo-355164.jpeg?crop=faces&fit=crop&h=200&w=200&auto=compress&cs=tinysrgb',
-                            width: 70,
-                          )),
+                      Text(
+                        "${employe.firstName} ${employe.lastName}",
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      ),
                       const SizedBox(
-                        width: 15,
+                        height: 5,
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "${employe.firstName} ${employe.lastName}",
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            employe.function.label,
-                            style: TextStyle(
-                                color: Colors.black.withOpacity(0.7),
-                                fontSize: 18),
-                          ),
-                        ],
-                      )
+                      Text(
+                        employe.function.label,
+                        style: TextStyle(
+                            color: Colors.black.withOpacity(0.7), fontSize: 18),
+                      ),
                     ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      // Replace 'routeName' with the name of the route you want to navigate to
-                      Get.to(() => const Profile());
-                    },
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                          color: Colors.deepOrange,
-                          borderRadius: BorderRadius.circular(15.0)),
-                      child: const Center(
-                        child: Text(
-                          'Mon Profile',
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ),
-                    ),
-                  ),
+                  )
                 ],
               ),
-            ),
-          )),
-      const SizedBox(
+              const SizedBox(
+                height: 20,
+              ),
+              GestureDetector(
+                onTap: () {
+                  // Replace 'routeName' with the name of the route you want to navigate to
+                  Get.to(() => const Profile());
+                },
+                child: Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                      color: Colors.deepOrange,
+                      borderRadius: BorderRadius.circular(15.0)),
+                  child: const Center(
+                    child: Text(
+                      'Mon Profile',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+        const SizedBox(
         height: 20,
       ),
-      FadeAnimation(
-          1.3,
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0, right: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Statistiques',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'View all',
-                    ))
-              ],
+        Padding(
+        padding: const EdgeInsets.only(left: 20.0, right: 10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Statistiques',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-          )),
-      Container(
+            TextButton(
+                onPressed: () {},
+                child: const Text(
+                  'View all',
+                ))
+          ],
+        ),
+      ),
+          buildCard(),
+          Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         height: 300,
         child: GridView.builder(
@@ -252,15 +246,52 @@ class _employeDashboardPageState extends State<employeDashboardPage> {
               crossAxisSpacing: 10.0,
               mainAxisSpacing: 10.0,
             ),
-            physics: const NeverScrollableScrollPhysics(),
             itemCount: statistiques.length,
             itemBuilder: (BuildContext context, int index) {
-              return FadeAnimation(
-                  (1.0 + index) / 4,
-                  serviceContainer(statistiques[index].number,
-                      statistiques[index].name, index));
-            }),
+              return serviceContainer(
+                  statistiques[index].number, statistiques[index].name, index);
+            }
+    ),
       ),
     ]));
+  }
+
+  buildCard() {
+    getEncour();
+    return Card(
+      shadowColor: Colors.black38,
+      elevation: 5,
+      margin: const EdgeInsets.only(left: 16, right: 16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(15.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              offset: const Offset(0, 0),
+              blurRadius: 10.0,
+            ),
+          ],
+        ),
+        child: Container(
+          height: 100,
+          padding: const EdgeInsets.all(8),
+          alignment: Alignment.center,
+          child: ListTile(
+            title: Text('$encours',style: const TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                color: Colors.orange),
+                textAlign: TextAlign.center
+            ),
+            subtitle:  const Text('Congés En Cours',textAlign: TextAlign.center,style: TextStyle(
+              color: Colors.black
+            ), ),
+          ),
+        ),
+      ),
+    );
+
   }
 }

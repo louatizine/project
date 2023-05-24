@@ -15,7 +15,7 @@ dependencies:
   google_fonts: ^4.0.3
   flutter_native_splash: ^2.2.17
   liquid_swipe: ^3.0.0
-  get:
+  get: ^4.6.5
   smooth_page_indicator: ^1.0.1
   otp_text_field: ^1.1.3
   shared_preferences: ^2.0.15
@@ -26,9 +26,6 @@ dependencies:
   syncfusion_flutter_calendar: ^19.1.59
   line_icons: ^2.0.1
   get_storage:
-  date_picker_timeline:
-  flutter_local_notifications:
-  flutter_native_timezone:
   flutter_staggered_animations: ^1.1.1
   timezone: ^0.7.0
   sqflite: ^2.0.0+3
@@ -41,8 +38,9 @@ dependencies:
   intl: ^0.17.0
   flutter_fast_forms:
   simple_animations:
-
-
+  fluttertoast: ^8.2.1
+  pie_chart: ^5.0.0
+  date_picker_timeline: ^1.2.3
 
 
 

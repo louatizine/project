@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gestionConge/src/features/authentification/screens/splash_screen/splash_screen.dart';
 import 'package:gestionConge/src/utils/theme/theme.dart';
-import 'package:get/get.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 
-void main() {
+void main()async {
   runApp(const App(),);
 }
 class App extends StatelessWidget {
@@ -18,7 +18,7 @@ class App extends StatelessWidget {
       darkTheme: TAppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
       transitionDuration: const Duration(milliseconds: 500),
-      home:  const Splash(),
+      home: const Splash(),
     );
 
   }

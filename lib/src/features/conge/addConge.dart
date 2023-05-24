@@ -11,7 +11,11 @@ import 'package:gestionConge/Models/Conge.dart';
 import 'package:gestionConge/Models/CongeRequest.dart';
 import 'package:gestionConge/Service/conge_service.dart';
 import 'package:flutter_fast_forms/flutter_fast_forms.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+
+import '../authentification/screens/signup/signup_sceen.dart';
 
 class addCongePage extends StatefulWidget {
   const addCongePage({Key? key}) : super(key: key);
@@ -79,6 +83,7 @@ class _addCongePageState extends State<addCongePage> {
               ElevatedButton(
                 child: const Text('Ajouter'),
                 onPressed: () {
+
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     addCongeForm();

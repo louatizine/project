@@ -28,7 +28,8 @@ class _DisplayState extends State<Display> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: FutureBuilder(
+        body:
+        FutureBuilder(
       future: employeesList,
       builder: (context, snapshot) {
         if (snapshot.hasData) {

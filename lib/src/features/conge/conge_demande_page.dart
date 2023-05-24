@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:gestionConge/Models/Conge.dart';
 import 'package:gestionConge/Service/conge_service.dart';
+import 'package:gestionConge/src/features/Dashboard/chart.dart';
+import 'package:gestionConge/src/features/Dashboard/home.dart';
 import 'package:gestionConge/src/features/Dashboard/homeEmployee.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
@@ -37,12 +39,11 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: FutureBuilder(
         future: congeList,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            if(snapshot.data!.length!=0) {
+            if (snapshot.data!.length != 0) {
               return ListView.separated(
                 padding: const EdgeInsets.only(top: 15.0),
                 itemCount: snapshot.data!.length,
@@ -53,8 +54,7 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
                   return buildCard(snapshot.data![index]);
                 },
               );
-            }
-            else{
+            } else {
               return const Center(
                 child: Text('Aucune Demande en cours ...'),
               );
@@ -66,7 +66,8 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
           } else {
             return const Center(
               child: Text('Oops'),
-            );          }
+            );
+          }
         },
       ),
     );
@@ -94,19 +95,22 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: const Text("Confirmation"),
-                            content:
-                                const Text("Êtes-vous sûre de vouloir accepter?"),
+                            content: const Text(
+                                "Êtes-vous sûre de vouloir accepter?"),
                             actions: [
                               TextButton(
-                                child: const Text("Non"),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
+                                  child: const Text("Non"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  }),
                               TextButton(
                                 child: const Text("Oui"),
                                 onPressed: () {
                                   editCongeStatuts(true, conge);
                                   Navigator.of(context).pop();
                                   Navigator.of(context).pop();
+                                  Get.to(() => HomePage());
                                 },
                               ),
                             ],
@@ -133,17 +137,22 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: const Text("Confirmation"),
-                            content: const Text("Voulez-vous vraiment supprimer?"),
+                            content:
+                                const Text("Voulez-vous vraiment supprimer?"),
                             actions: [
                               TextButton(
-                                child: const Text("Non"),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
+                                  child: const Text("Non"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  }),
                               TextButton(
                                 child: const Text("Oui"),
                                 onPressed: () {
                                   editCongeStatuts(false, conge);
                                   Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                  Get.to(() => HomePage());
                                 },
                               ),
                             ],
@@ -276,7 +285,7 @@ class _CongeDemandePageState extends State<CongeDemandePage> {
                                     size: 16), // Add icon here
                                 const SizedBox(
                                     width:
-                                    3), // Add some spacing between icon and text
+                                        3), // Add some spacing between icon and text
                                 Text(
                                     "Type :  ${conge.typeConge!.label}"), // Use string interpolation to add variable to text
                               ],

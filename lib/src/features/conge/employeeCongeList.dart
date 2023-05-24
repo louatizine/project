@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:gestionConge/Models/Conge.dart';
 import 'package:gestionConge/Service/conge_service.dart';
+import 'package:gestionConge/src/features/Dashboard/homeEmployee.dart';
+import 'package:gestionConge/src/features/conge/addConge.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+
 
 class EmployeeCongeListPage extends StatefulWidget {
   const EmployeeCongeListPage({Key? key}) : super(key: key);
@@ -26,24 +30,34 @@ class _EmployeeCongeListPageState extends State<EmployeeCongeListPage> {
   void deleteRequest(Conge conge) {
      congeService.deleteConge(conge);
   }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      body: FutureBuilder(
+      body:
+      FutureBuilder(
         future: congeList,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return ListView.separated(
-              padding: const EdgeInsets.only(top: 15.0),
-              itemCount: snapshot.data!.length,
-              separatorBuilder: (context, index) {
-                return const Divider();
-              },
-              itemBuilder: (context, index) {
-                return buildCard(snapshot.data![index]);
-              },
+            return Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back,color: Colors.black38,),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) =>  HomeEmployeePage()),
+                  ),
+                ),
+                backgroundColor: Colors.white,
+              ),
+              body:
+              ListView.separated(
+                padding: const EdgeInsets.only(top: 15.0),
+                itemCount: snapshot.data!.length,
+                separatorBuilder: (context, index) {
+                  return const Divider();
+                },
+                itemBuilder: (context, index) {
+                  final reversedIndex = snapshot.data!.length - index - 1;
+                  return buildCard(snapshot.data![reversedIndex]);                },
+              ),
             );
           } else if (snapshot.hasError) {
             return const Center(
@@ -52,11 +66,13 @@ class _EmployeeCongeListPageState extends State<EmployeeCongeListPage> {
           } else {
             return const Center(
               child: Text('No request'),
-            );          }
+            );
+          }
         },
       ),
     );
   }
+
 
   buildCard(Conge conge) {
     DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -95,6 +111,7 @@ class _EmployeeCongeListPageState extends State<EmployeeCongeListPage> {
                                       congeList = congeService.getCongeByEmployee();
                                       Navigator.of(context).pop();
                                       Navigator.of(context).pop();
+                                      Get.to(() => HomeEmployeePage());
 
                                     },
                                   ),
@@ -114,6 +131,51 @@ class _EmployeeCongeListPageState extends State<EmployeeCongeListPage> {
                       ),
                       alignment: Alignment.center,
                       child: const Text('Supprimer',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      if(conge.status!.label=="En cours")
+                        {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("Confirmation"),
+                                content: const Text("Voulez-vous vraiment Modifier la demande ?"),
+                                actions: [
+                                  TextButton(
+                                    child: const Text("Non"),
+                                    onPressed: () => Navigator.of(context).pop(),
+                                  ),
+                                  TextButton(
+                                    child: const Text("Oui"),
+                                    onPressed: () {
+                                      deleteRequest(conge);
+                                      congeList = congeService.getCongeByEmployee();
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                      Get.to(() => addCongePage());
+
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+
+                    },
+                    child: Container(
+                      height: 50,
+                      width: 300,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text('Modifier',
                           style: TextStyle(color: Colors.white)),
                     ),
                   ),

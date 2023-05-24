@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gestionConge/Models/Conge.dart';
 import 'package:gestionConge/Models/CongeRequest.dart';
-import 'package:gestionConge/src/features/conge/conge_demande_page.dart';
+import 'package:gestionConge/src/features/conge/employeeCongeList.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
@@ -83,7 +85,18 @@ class CongeService {
         body: json.encode(conge.toJson()));
 
     if (response.statusCode == 200) {
-      Get.to(() => CongeDemandePage());
+      Get.to(() => const EmployeeCongeListPage());
+
+      Fluttertoast.showToast(
+        msg: "Congé ajouter avec succès!",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 2,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
     } else {
       throw Exception('Failed to add event');
     }
@@ -131,6 +144,8 @@ class CongeService {
     });
   }
 
+
+
   Future<List<Conge>> getCongeEnCours() async {
     List<Conge> LeaveList = [];
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -138,7 +153,7 @@ class CongeService {
     String? employeeId = prefs.getString('employe_id');
 
     final response = await http.get(
-      Uri.parse('http://localhost:8090/api/conge/getByEmployeId/${employeeId}'),
+      Uri.parse('http://localhost:8090/api/conge/getByEmployeId/$employeeId'),
       headers: {
         HttpHeaders.authorizationHeader: 'Bearer $accessToken',
       },
@@ -147,15 +162,37 @@ class CongeService {
       var data = jsonDecode(response.body);
       for (Map<String, dynamic> leave in data) {
         Conge lea = Conge.fromJson(leave);
-        LeaveList.add(lea);
+        if (lea.status?.label == "en cours") {
+          LeaveList.add(lea);
+        }
       }
-      LeaveList = LeaveList.where((leave) => leave.status!.label == "En cours").toList();
-      print(LeaveList);
       return LeaveList;
     } else {
       throw Exception("error ");
     }
   }
+
+  Future<List<Conge>> getTotalList() async {
+    List<Conge> LeaveList = [];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+    final response = await http.get(
+      Uri.parse('http://localhost:8090/api/conge/getAll'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+      },
+    );
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      for (Map<String, dynamic> leave in data) {
+        Conge lea = Conge.fromJson(leave);
+      }
+      return LeaveList;
+    } else {
+      throw Exception("error ");
+    }
+  }
+
 
 
 }

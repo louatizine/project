@@ -10,7 +10,6 @@ import '../conge/addConge.dart';
 import '../profile/profile.dart';
 import 'dashboard.dart';
 import 'my_drawer_header.dart';
-import '../conge/conge_demande_page.dart';
 
 class HomeEmployeePage extends StatefulWidget {
   @override
@@ -35,9 +34,7 @@ class _HomeEmployeePageState extends State<HomeEmployeePage> {
     _loadUserName();
     if (currentPage == DrawerSections.dashboard) {
       container = const employeDashboardPage();
-    }  else if (currentPage == DrawerSections.collaboratorsList) {
-      container = Display();
-    }else if (currentPage == DrawerSections.demandeConge) {
+    } else if (currentPage == DrawerSections.demandeConge) {
       container = addCongePage();
     } else if (currentPage == DrawerSections.mesDemandes) {
       container = EmployeeCongeListPage();
@@ -96,15 +93,13 @@ class _HomeEmployeePageState extends State<HomeEmployeePage> {
         children: [
           menuItem(1, "Dashboard", Icons.dashboard_outlined,
               currentPage == DrawerSections.dashboard ? true : false),
-          menuItem(2, "Collaborateurs ", Icons.supervised_user_circle,
-              currentPage == DrawerSections.collaboratorsList ? true : false),
-          menuItem(3, "Demande congé", Icons.event,
+          menuItem(2, "Demande congé", Icons.event,
               currentPage == DrawerSections.demandeConge ? true : false),
-          menuItem(4, "Mes Demandes", Icons.notifications_outlined,
+          menuItem(3, "Mes Demandes", Icons.notifications_outlined,
               currentPage == DrawerSections.mesDemandes ? true : false),
-          menuItem(5, "Profile", Icons.person,
+          menuItem(4, "Profile", Icons.person,
               currentPage == DrawerSections.profile ? true : false),
-          menuItem(6, "Déconnexion", Icons.logout,
+          menuItem(5, "Déconnexion", Icons.logout,
               currentPage == DrawerSections.logout ? true : false),
           const Divider(),
         ],
@@ -122,14 +117,12 @@ class _HomeEmployeePageState extends State<HomeEmployeePage> {
             if (id == 1) {
               currentPage = DrawerSections.dashboard;
             } else if (id == 2) {
-              currentPage = DrawerSections.collaboratorsList;
-            }else if (id == 3) {
               currentPage = DrawerSections.demandeConge;
-            } else if (id == 4) {
+            } else if (id == 3) {
               currentPage = DrawerSections.mesDemandes;
-            }  else if (id == 5) {
+            }  else if (id == 4) {
               currentPage = DrawerSections.profile;
-            } else if (id == 6) {
+            } else if (id == 5) {
               currentPage = DrawerSections.logout;
             }
           });
@@ -164,7 +157,6 @@ class _HomeEmployeePageState extends State<HomeEmployeePage> {
 }
 
 enum DrawerSections {
-  collaboratorsList,
   dashboard,
   demandeConge,
   profile,
